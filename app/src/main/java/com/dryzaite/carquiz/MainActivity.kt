@@ -7,41 +7,36 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import com.dryzaite.carquiz.data.repository.InMemoryCarQuizRepository
+import com.dryzaite.carquiz.domain.usecase.GenerateQuizQuestionUseCase
+import com.dryzaite.carquiz.domain.usecase.SubmitAnswerUseCase
+import com.dryzaite.carquiz.ui.quiz.QuizScreen
+import com.dryzaite.carquiz.ui.quiz.QuizViewModel
 import com.dryzaite.carquiz.ui.theme.CarQuizTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val repository = InMemoryCarQuizRepository()
+        val viewModel = QuizViewModel(
+            generateQuizQuestionUseCase = GenerateQuizQuestionUseCase(repository),
+            submitAnswerUseCase = SubmitAnswerUseCase(),
+        )
+
         setContent {
             CarQuizTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
+                    QuizScreen(
+                        viewModel = viewModel,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
                     )
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    CarQuizTheme {
-        Greeting("Android")
     }
 }

@@ -24,3 +24,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Car Quiz"
 include(":app")
+include(":shared")

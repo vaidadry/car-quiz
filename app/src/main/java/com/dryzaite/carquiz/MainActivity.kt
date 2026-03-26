@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.dryzaite.carquiz.audio.SuccessSfxPlayer
 import com.dryzaite.carquiz.speech.AndroidBrandSpeaker
 import com.dryzaite.carquiz.ui.CarQuizApp
@@ -16,6 +17,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var successSfxPlayer: SuccessSfxPlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(
             navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT)

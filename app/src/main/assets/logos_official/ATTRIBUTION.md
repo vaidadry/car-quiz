@@ -24,6 +24,26 @@ Downloaded for educational quiz use.
 - nissan — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/nissan.svg
 - mazda — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/mazda.svg
 - subaru — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/subaru.svg
+- ferrari — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/ferrari.svg
+- lamborghini — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/lamborghini.svg
+- fiat — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/fiat.svg
+- citroen — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/citroen.svg
+- skoda — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/skoda.svg
+- seat — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/seat.svg
+- opel — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/opel.svg
+- mini — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/mini.svg
+- chrysler — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/chrysler.svg
+- ram — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/ram.svg
+- infiniti — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/infiniti.svg
+- mitsubishi — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/mitsubishi.svg
+- suzuki — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/suzuki.svg
+- acura — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/acura.svg
+- bugatti — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/bugatti.svg
+- bentley — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/bentley.svg
+- maserati — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/maserati.svg
+- mclaren — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/mclaren.svg
+- astonmartin — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/astonmartin.svg
+- rollsroyce — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/rollsroyce.svg
 
 ## Notes
 

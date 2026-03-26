@@ -19,7 +19,7 @@ object BrandCatalog {
         CarBrand("skoda", "Škoda", BrandRegion.EU, R.drawable.ic_skoda, 0xFF2E7D32),
         CarBrand("seat", "SEAT", BrandRegion.EU, R.drawable.ic_seat, 0xFF37474F),
         CarBrand("opel", "Opel", BrandRegion.EU, R.drawable.ic_opel, 0xFF455A64),
-        CarBrand("mini cooper", "Mini Cooper", BrandRegion.EU, R.drawable.ic_mini, 0xFF616161),
+        CarBrand("mini_cooper", "Mini Cooper", BrandRegion.EU, R.drawable.ic_mini, 0xFF616161),
         CarBrand("bugatti", "Bugatti", BrandRegion.EU, R.drawable.ic_bugatti, 0xFF0D47A1),
         CarBrand("bentley", "Bentley", BrandRegion.EU, R.drawable.ic_bentley, 0xFF2E7D32),
         CarBrand("maserati", "Maserati", BrandRegion.EU, R.drawable.ic_maserati, 0xFF1565C0),

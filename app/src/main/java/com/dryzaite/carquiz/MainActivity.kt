@@ -6,14 +6,18 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.room.Room
 import com.dryzaite.carquiz.audio.SuccessSfxPlayer
 import com.dryzaite.carquiz.speech.AndroidBrandSpeaker
+import com.dryzaite.carquiz.stats.data.AppDatabase
+import com.dryzaite.carquiz.stats.data.GameStatsRepository
 import com.dryzaite.carquiz.ui.CarQuizApp
 import com.dryzaite.carquiz.ui.theme.CarQuizTheme
 
 class MainActivity : ComponentActivity() {
     private lateinit var brandSpeaker: AndroidBrandSpeaker
     private lateinit var successSfxPlayer: SuccessSfxPlayer
+    private lateinit var gameStatsRepository: GameStatsRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,10 +27,17 @@ class MainActivity : ComponentActivity() {
 
         brandSpeaker = AndroidBrandSpeaker(this)
         successSfxPlayer = SuccessSfxPlayer(this)
+        val database = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java,
+            "vroom_explorer.db"
+        ).build()
+        gameStatsRepository = GameStatsRepository(database.gameStatsDao())
 
         setContent {
             CarQuizTheme {
                 CarQuizApp(
+                    statsRepository = gameStatsRepository,
                     onSpeakBrand = { brandSpeaker.speak(it) },
                     onPositiveSwipe = {
                         successSfxPlayer.playSuccess()

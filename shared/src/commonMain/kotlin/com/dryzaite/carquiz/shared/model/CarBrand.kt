@@ -10,6 +10,6 @@ data class CarBrand(
     val id: String,
     val displayName: String,
     val region: BrandRegion,
-    val initials: String,
+    val logo: Int,
     val accentColorHex: Long
 )

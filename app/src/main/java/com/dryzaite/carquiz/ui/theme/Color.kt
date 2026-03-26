@@ -19,7 +19,7 @@ val AppBorderNeutral = Color(0xFFD6D0DF)
 val AppSurface = Color.White
 val AppSurfaceSoft = Color(0xFFF8F4FC)
 val AppSurfaceTint = Color(0xFFF7FAFE)
-val AppLogoTile = Color.Black
+val AppLogoTile = Color.Transparent
 
 val AppGradientTop = Color(0xFFFFF0E4)
 val AppGradientMid = Color(0xFFFFE5F2)

@@ -4,6 +4,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -40,6 +41,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.ui.res.painterResource
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -59,6 +61,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -414,7 +417,7 @@ private fun LogoQuizScreen(
                             Box(modifier = Modifier
                                 .size(64.dp)
                                 .background(AppLogoTile, RoundedCornerShape(2.dp)), contentAlignment = Alignment.Center) {
-                                Text(text = brand.initials, color = AppSurface, fontWeight = FontWeight.Bold)
+                                BrandLogo(brand = brand, modifier = Modifier.fillMaxSize().padding(8.dp))
                             }
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(text = brand.displayName, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = AppTextPrimary)
@@ -550,7 +553,7 @@ private fun FlashcardDeckScreen(
 @Composable
 private fun FlashCardContent(brand: CarBrand, modifier: Modifier = Modifier) {
     Card(
-        modifier = modifier.height(400.dp),
+        modifier = modifier.height(400.dp).padding(24.dp),
         shape = RoundedCornerShape(36.dp),
         colors = CardDefaults.cardColors(containerColor = AppSurface),
         elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
@@ -565,7 +568,7 @@ private fun FlashCardContent(brand: CarBrand, modifier: Modifier = Modifier) {
             Box(modifier = Modifier
                 .size(170.dp)
                 .background(AppLogoTile, RoundedCornerShape(4.dp)), contentAlignment = Alignment.Center) {
-                Text(brand.initials, color = AppSurface, fontSize = 54.sp, fontWeight = FontWeight.Black)
+                BrandLogo(brand = brand, modifier = Modifier.fillMaxSize().padding(16.dp))
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(brand.displayName, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.ExtraBold)
@@ -710,4 +713,15 @@ fun App() {
             onPositiveSwipe = { }
         )
     }
+}
+
+@Composable
+private fun BrandLogo(brand: CarBrand, modifier: Modifier = Modifier) {
+    require(brand.logo != 0) { "Missing logo dd for brand: ${brand.id}" }
+    Image(
+        painter = painterResource(id = brand.logo),
+        contentDescription = brand.displayName,
+        modifier = modifier,
+        contentScale = ContentScale.Fit
+    )
 }

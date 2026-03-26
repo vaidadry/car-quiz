@@ -1,8 +1,7 @@
 package com.dryzaite.carquiz
 
 import android.graphics.Color
-import android.media.AudioManager
-import android.media.ToneGenerator
+import android.media.MediaPlayer
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -14,7 +13,7 @@ import com.dryzaite.carquiz.ui.theme.CarQuizTheme
 
 class MainActivity : ComponentActivity() {
     private lateinit var brandSpeaker: AndroidBrandSpeaker
-    private var toneGenerator: ToneGenerator? = null
+    private var badumtzPlayer: MediaPlayer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,13 +22,18 @@ class MainActivity : ComponentActivity() {
         )
 
         brandSpeaker = AndroidBrandSpeaker(this)
-        toneGenerator = ToneGenerator(AudioManager.STREAM_MUSIC, 90)
+        badumtzPlayer = MediaPlayer.create(this, R.raw.badumtz_sound)
 
         setContent {
             CarQuizTheme {
                 CarQuizApp(
                     onSpeakBrand = { brandSpeaker.speak(it) },
-                    onPositiveSwipe = { toneGenerator?.startTone(ToneGenerator.TONE_SUP_RADIO_NOTAVAIL, 130) }
+                    onPositiveSwipe = {
+                        badumtzPlayer?.let { player ->
+                            if (player.isPlaying) player.seekTo(0)
+                            player.start()
+                        }
+                    }
                 )
             }
         }
@@ -38,7 +42,7 @@ class MainActivity : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         brandSpeaker.shutdown()
-        toneGenerator?.release()
-        toneGenerator = null
+        badumtzPlayer?.release()
+        badumtzPlayer = null
     }
 }

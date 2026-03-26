@@ -53,6 +53,7 @@ import com.dryzaite.carquiz.ui.theme.BrandPrimary
 import com.dryzaite.carquiz.ui.theme.BrandSecondary
 import com.dryzaite.carquiz.ui.theme.BrandSecondarySoft
 import com.dryzaite.carquiz.ui.theme.BrandTertiary
+import java.util.Locale
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -109,7 +110,10 @@ fun LogoQuizScreen(
             modifier = Modifier.fillMaxWidth()
         )
         Text(
-            stringResource(R.string.brand_with_question, activeQuestion.promptBrand.displayName),
+            stringResource(
+                R.string.brand_with_question,
+                activeQuestion.promptBrand.displayName.uppercase(Locale.getDefault())
+            ),
             style = MaterialTheme.typography.headlineLarge,
             color = BrandPrimary,
             fontWeight = FontWeight.ExtraBold,
@@ -156,7 +160,12 @@ fun LogoQuizScreen(
                                 BrandLogo(brand = brand, modifier = Modifier.fillMaxSize().padding(8.dp))
                             }
                             Spacer(modifier = Modifier.height(16.dp))
-                            Text(text = brand.displayName, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = AppTextPrimary)
+                            Text(
+                                text = brand.displayName.uppercase(Locale.getDefault()),
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold,
+                                color = AppTextPrimary
+                            )
                         }
                     }
                 }

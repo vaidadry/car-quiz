@@ -48,6 +48,7 @@ import com.dryzaite.carquiz.ui.theme.AppTextSecondary
 import com.dryzaite.carquiz.ui.theme.BrandPrimary
 import com.dryzaite.carquiz.ui.theme.BrandSecondary
 import com.dryzaite.carquiz.ui.theme.BrandTertiary
+import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.roundToInt
 import kotlin.math.sign
@@ -157,7 +158,11 @@ private fun FlashCardContent(brand: CarBrand, modifier: Modifier = Modifier) {
                 BrandLogo(brand = brand, modifier = Modifier.fillMaxSize().padding(16.dp))
             }
             Spacer(modifier = Modifier.height(16.dp))
-            Text(brand.displayName, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.ExtraBold)
+            Text(
+                brand.displayName.uppercase(Locale.getDefault()),
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.ExtraBold
+            )
         }
     }
 }

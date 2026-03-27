@@ -608,9 +608,9 @@ private fun StatsScreen(stats: PersistedStats) {
             topSubtitle = if (stats.lastQuizTotal == 0) "No games yet" else "Great Job!",
             topPercent = "${stats.lastQuizAccuracy}%",
             bottomTitle = "Flashcards",
-            bottomValue = stats.lastFlashcardsGuessed.toString(),
+            bottomValue = "${stats.lastFlashcardsGuessed}/${stats.lastFlashcardsTotal}",
             bottomSubtitle = "Guessed",
-            bottomPercent = "${stats.lastFlashcardsRate}%"
+            bottomPercent = "${stats.lastFlashcardsAccuracy}%"
         )
 
         Text(
@@ -627,9 +627,9 @@ private fun StatsScreen(stats: PersistedStats) {
             topSubtitle = if (stats.bestQuizTotal == 0) "No games yet" else "Quiz Master",
             topPercent = "${stats.bestQuizAccuracy}%",
             bottomTitle = "Max\nGuessed",
-            bottomValue = stats.bestFlashcardsGuessed.toString(),
+            bottomValue = "${stats.bestFlashcardsGuessed}/${stats.bestFlashcardsTotal}",
             bottomSubtitle = "In one go",
-            bottomPercent = "${stats.bestFlashcardsRate}%"
+            bottomPercent = "${stats.bestFlashcardsAccuracy}%"
         )
     }
 }
@@ -799,11 +799,11 @@ fun StatsPreview() {
                 lastQuizCorrect = 8,
                 lastQuizTotal = 10,
                 lastFlashcardsGuessed = 12,
-                lastFlashcardsRate = 92,
+                lastFlashcardsTotal = 15,
                 bestQuizCorrect = 10,
                 bestQuizTotal = 10,
                 bestFlashcardsGuessed = 45,
-                bestFlashcardsRate = 98
+                bestFlashcardsTotal = 50
             )
         )
     }

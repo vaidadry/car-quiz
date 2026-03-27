@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
             applicationContext,
             AppDatabase::class.java,
             "vroom_explorer.db"
-        ).build()
+        ).fallbackToDestructiveMigration(dropAllTables = true).build()
         gameStatsRepository = GameStatsRepository(database.gameStatsDao())
 
         setContent {

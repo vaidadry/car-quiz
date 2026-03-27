@@ -7,17 +7,23 @@ data class PersistedStats(
     val lastQuizCorrect: Int = 0,
     val lastQuizTotal: Int = 0,
     val lastFlashcardsGuessed: Int = 0,
-    val lastFlashcardsRate: Int = 0,
+    val lastFlashcardsTotal: Int = 0,
     val bestQuizCorrect: Int = 0,
     val bestQuizTotal: Int = 0,
     val bestFlashcardsGuessed: Int = 0,
-    val bestFlashcardsRate: Int = 0
+    val bestFlashcardsTotal: Int = 0
 ) {
     val lastQuizAccuracy: Int
         get() = if (lastQuizTotal == 0) 0 else (lastQuizCorrect * 100 / lastQuizTotal)
 
     val bestQuizAccuracy: Int
         get() = if (bestQuizTotal == 0) 0 else (bestQuizCorrect * 100 / bestQuizTotal)
+
+    val lastFlashcardsAccuracy: Int
+        get() = if (lastFlashcardsTotal == 0) 0 else (lastFlashcardsGuessed * 100 / lastFlashcardsTotal)
+
+    val bestFlashcardsAccuracy: Int
+        get() = if (bestFlashcardsTotal == 0) 0 else (bestFlashcardsGuessed * 100 / bestFlashcardsTotal)
 }
 
 class GameStatsRepository(private val dao: GameStatsDao) {
@@ -25,7 +31,7 @@ class GameStatsRepository(private val dao: GameStatsDao) {
 
     suspend fun recordQuiz(correct: Int, total: Int) {
         val current = dao.get() ?: GameStatsEntity()
-        val improved = isQuizImproved(
+        val improved = isImproved(
             currentCorrect = current.bestQuizCorrect,
             currentTotal = current.bestQuizTotal,
             newCorrect = correct,
@@ -43,15 +49,20 @@ class GameStatsRepository(private val dao: GameStatsDao) {
     }
 
     suspend fun recordFlashcards(rightGuessed: Int, totalSwipes: Int) {
-        val rate = if (totalSwipes == 0) 0 else (rightGuessed * 100 / totalSwipes)
         val current = dao.get() ?: GameStatsEntity()
+        val improved = isImproved(
+            currentCorrect = current.bestFlashcardsGuessed,
+            currentTotal = current.bestFlashcardsTotal,
+            newCorrect = rightGuessed,
+            newTotal = totalSwipes
+        )
 
         dao.upsert(
             current.copy(
                 lastFlashcardsGuessed = rightGuessed,
-                lastFlashcardsRate = rate,
-                bestFlashcardsGuessed = maxOf(current.bestFlashcardsGuessed, rightGuessed),
-                bestFlashcardsRate = maxOf(current.bestFlashcardsRate, rate)
+                lastFlashcardsTotal = totalSwipes,
+                bestFlashcardsGuessed = if (improved) rightGuessed else current.bestFlashcardsGuessed,
+                bestFlashcardsTotal = if (improved) totalSwipes else current.bestFlashcardsTotal
             )
         )
     }
@@ -60,14 +71,14 @@ class GameStatsRepository(private val dao: GameStatsDao) {
         lastQuizCorrect = lastQuizCorrect,
         lastQuizTotal = lastQuizTotal,
         lastFlashcardsGuessed = lastFlashcardsGuessed,
-        lastFlashcardsRate = lastFlashcardsRate,
+        lastFlashcardsTotal = lastFlashcardsTotal,
         bestQuizCorrect = bestQuizCorrect,
         bestQuizTotal = bestQuizTotal,
         bestFlashcardsGuessed = bestFlashcardsGuessed,
-        bestFlashcardsRate = bestFlashcardsRate
+        bestFlashcardsTotal = bestFlashcardsTotal
     )
 
-    private fun isQuizImproved(
+    private fun isImproved(
         currentCorrect: Int,
         currentTotal: Int,
         newCorrect: Int,

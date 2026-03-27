@@ -2,8 +2,6 @@ package com.dryzaite.carquiz.stats.data
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 
 data class PersistedStats(
     val lastQuizCorrect: Int = 0,
@@ -29,11 +27,9 @@ data class PersistedStats(
 }
 
 class GameStatsRepository(private val dao: GameStatsDao) {
-    private val writeMutex = Mutex()
-
     val stats: Flow<PersistedStats> = dao.observe().map { it?.toModel() ?: PersistedStats() }
 
-    suspend fun recordQuiz(correct: Int, total: Int) = writeMutex.withLock {
+    suspend fun recordQuiz(correct: Int, total: Int) {
         val current = dao.get() ?: GameStatsEntity()
         val improved = isImproved(
             currentCorrect = current.bestQuizCorrect,
@@ -52,7 +48,7 @@ class GameStatsRepository(private val dao: GameStatsDao) {
         )
     }
 
-    suspend fun recordFlashcards(rightGuessed: Int, totalSwipes: Int) = writeMutex.withLock {
+    suspend fun recordFlashcards(rightGuessed: Int, totalSwipes: Int) {
         val current = dao.get() ?: GameStatsEntity()
         val improved = isImproved(
             currentCorrect = current.bestFlashcardsGuessed,

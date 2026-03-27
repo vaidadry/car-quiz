@@ -47,6 +47,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
@@ -73,6 +74,8 @@ import androidx.compose.ui.unit.sp
 import com.dryzaite.carquiz.shared.model.BrandCatalog
 import com.dryzaite.carquiz.shared.model.CarBrand
 import com.dryzaite.carquiz.shared.quiz.QuizEngine
+import com.dryzaite.carquiz.stats.data.GameStatsRepository
+import com.dryzaite.carquiz.stats.data.PersistedStats
 import com.dryzaite.carquiz.ui.theme.AppBorderNeutral
 import com.dryzaite.carquiz.ui.theme.AppError
 import com.dryzaite.carquiz.ui.theme.AppGradientBottom
@@ -131,6 +134,7 @@ private val CarFunFacts = listOf(
 
 @Composable
 fun CarQuizApp(
+    statsRepository: GameStatsRepository,
     onSpeakBrand: (String) -> Unit,
     onPositiveSwipe: () -> Unit
 ) {
@@ -139,13 +143,13 @@ fun CarQuizApp(
     var showCongrats by remember { mutableStateOf(false) }
     var quizSessionId by remember { mutableIntStateOf(0) }
     var lastHomeTapMs by remember { mutableLongStateOf(0L) }
-
     var lastScore by remember { mutableIntStateOf(0) }
     var lastTotal by remember { mutableIntStateOf(0) }
-    var lifetimeCorrect by remember { mutableIntStateOf(0) }
-    var lifetimeAnswered by remember { mutableIntStateOf(0) }
     var rightSwipes by remember { mutableIntStateOf(0) }
     var totalSwipes by remember { mutableIntStateOf(0) }
+
+    val scope = rememberCoroutineScope()
+    val persistedStats by statsRepository.stats.collectAsState(initial = PersistedStats())
 
     Box(
         modifier = Modifier
@@ -199,9 +203,8 @@ fun CarQuizApp(
                                 onQuizComplete = { score, total ->
                                     lastScore = score
                                     lastTotal = total
-                                    lifetimeCorrect += score
-                                    lifetimeAnswered += total
                                     showCongrats = true
+                                    scope.launch { statsRepository.recordQuiz(score, total) }
                                 }
                             )
                         }
@@ -210,21 +213,33 @@ fun CarQuizApp(
                     MainTab.LEARN -> FlashcardDeckScreen(
                         brands = BrandCatalog.allBrands,
                         onSwipedRight = {
-                            totalSwipes += 1
-                            rightSwipes += 1
+                            val newRightSwipes = rightSwipes + 1
+                            val newTotalSwipes = totalSwipes + 1
+                            rightSwipes = newRightSwipes
+                            totalSwipes = newTotalSwipes
                             onPositiveSwipe()
+
+                            scope.launch {
+                                statsRepository.recordFlashcards(
+                                    rightGuessed = newRightSwipes,
+                                    totalSwipes = newTotalSwipes
+                                )
+                            }
                         },
-                        onSwipedLeft = { totalSwipes += 1 }
+                        onSwipedLeft = {
+                            val newTotalSwipes = totalSwipes + 1
+                            totalSwipes = newTotalSwipes
+
+                            scope.launch {
+                                statsRepository.recordFlashcards(
+                                    rightGuessed = rightSwipes,
+                                    totalSwipes = newTotalSwipes
+                                )
+                            }
+                        }
                     )
 
-                    MainTab.STATS -> StatsScreen(
-                        correct = lifetimeCorrect,
-                        answered = lifetimeAnswered,
-                        lastScore = lastScore,
-                        lastTotal = lastTotal,
-                        rightSwipes = rightSwipes,
-                        totalSwipes = totalSwipes
-                    )
+                    MainTab.STATS -> StatsScreen(stats = persistedStats)
                 }
             }
 
@@ -244,6 +259,10 @@ fun CarQuizApp(
                     lastHomeTapMs = now
                 } else {
                     showCongrats = false
+                    if (clicked == MainTab.LEARN && tab != MainTab.LEARN) {
+                        rightSwipes = 0
+                        totalSwipes = 0
+                    }
                 }
                 tab = clicked
             })
@@ -577,28 +596,104 @@ private fun FlashCardContent(brand: CarBrand, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun StatsScreen(
-    correct: Int,
-    answered: Int,
-    lastScore: Int,
-    lastTotal: Int,
-    rightSwipes: Int,
-    totalSwipes: Int
-) {
-    val quizPct = if (answered == 0) 0 else (correct * 100 / answered)
-    val swipePct = if (totalSwipes == 0) 0 else (rightSwipes * 100 / totalSwipes)
+private fun StatsScreen(stats: PersistedStats) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(18.dp)
+    ) {
+        Text(
+            "Last Game Stats",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.ExtraBold,
+            color = AppTextPrimary
+        )
 
-    Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(36.dp), colors = CardDefaults.cardColors(containerColor = AppSurface)) {
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Text("Your Stats", style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.ExtraBold)
-            Text("Quiz answers: $answered", style = MaterialTheme.typography.titleLarge)
-            Text("Quiz correct: $correct", style = MaterialTheme.typography.titleLarge)
-            Text("Quiz accuracy: $quizPct%", style = MaterialTheme.typography.titleLarge, color = BrandSecondary, fontWeight = FontWeight.ExtraBold)
-            Text("Last quiz: $lastScore/$lastTotal", style = MaterialTheme.typography.titleMedium, color = AppTextSecondary)
-            Spacer(modifier = Modifier.height(16.dp))
-            Text("Flashcards swiped: $totalSwipes", style = MaterialTheme.typography.titleLarge)
-            Text("Right swipes (YAY): $rightSwipes", style = MaterialTheme.typography.titleLarge)
-            Text("YAY rate: $swipePct%", style = MaterialTheme.typography.titleLarge, color = BrandTertiary, fontWeight = FontWeight.ExtraBold)
+        StatsGroupCard(
+            borderColor = BrandPrimary,
+            topTitle = "Quiz\nResults",
+            topValue = "${stats.lastQuizCorrect}/${stats.lastQuizTotal}",
+            topSubtitle = if (stats.lastQuizTotal == 0) "No games yet" else "Great Job!",
+            topPercent = "${stats.lastQuizAccuracy}%",
+            bottomTitle = "Flashcards",
+            bottomValue = "${stats.lastFlashcardsGuessed}/${stats.lastFlashcardsTotal}",
+            bottomSubtitle = "Guessed",
+            bottomPercent = "${stats.lastFlashcardsAccuracy}%"
+        )
+
+        Text(
+            "All Time Best",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.ExtraBold,
+            color = AppTextPrimary
+        )
+
+        StatsGroupCard(
+            borderColor = BrandTertiary,
+            topTitle = "Top\nScore",
+            topValue = "${stats.bestQuizCorrect}/${stats.bestQuizTotal}",
+            topSubtitle = if (stats.bestQuizTotal == 0) "No games yet" else "Quiz Master",
+            topPercent = "${stats.bestQuizAccuracy}%",
+            bottomTitle = "Max\nGuessed",
+            bottomValue = "${stats.bestFlashcardsGuessed}/${stats.bestFlashcardsTotal}",
+            bottomSubtitle = "In one go",
+            bottomPercent = "${stats.bestFlashcardsAccuracy}%"
+        )
+    }
+}
+
+@Composable
+private fun StatsGroupCard(
+    borderColor: Color,
+    topTitle: String,
+    topValue: String,
+    topSubtitle: String,
+    topPercent: String,
+    bottomTitle: String,
+    bottomValue: String,
+    bottomSubtitle: String,
+    bottomPercent: String
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(36.dp),
+        colors = CardDefaults.cardColors(containerColor = AppSurface),
+        border = BorderStroke(4.dp, borderColor)
+    ) {
+        Column(modifier = Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(18.dp)) {
+            StatsRow(topTitle, topValue, topSubtitle, topPercent, borderColor)
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(AppSurfaceSoft)
+            )
+            StatsRow(bottomTitle, bottomValue, bottomSubtitle, bottomPercent, borderColor)
+        }
+    }
+}
+
+@Composable
+private fun StatsRow(
+    title: String,
+    value: String,
+    subtitle: String,
+    percent: String,
+    percentColor: Color
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column {
+            Text(title, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.ExtraBold, lineHeight = 30.sp)
+            Text(subtitle, style = MaterialTheme.typography.titleMedium, color = AppTextSecondary)
+        }
+        Column(horizontalAlignment = Alignment.End) {
+            Text(value, style = MaterialTheme.typography.displaySmall, fontWeight = FontWeight.ExtraBold)
+            Text(percent, style = MaterialTheme.typography.titleLarge, color = percentColor, fontWeight = FontWeight.ExtraBold)
         }
     }
 }
@@ -706,11 +801,19 @@ private fun NavItem(item: MainTab, selected: Boolean, onTabChange: (MainTab) -> 
 
 @Preview
 @Composable
-fun App() {
+fun StatsPreview() {
     CarQuizTheme {
-        CarQuizApp(
-            onSpeakBrand = { },
-            onPositiveSwipe = { }
+        StatsScreen(
+            stats = PersistedStats(
+                lastQuizCorrect = 8,
+                lastQuizTotal = 10,
+                lastFlashcardsGuessed = 12,
+                lastFlashcardsTotal = 15,
+                bestQuizCorrect = 10,
+                bestQuizTotal = 10,
+                bestFlashcardsGuessed = 45,
+                bestFlashcardsTotal = 50
+            )
         )
     }
 }

@@ -37,6 +37,7 @@ object BrandCatalog {
         CarBrand("ram", "Ram", BrandRegion.USA, R.drawable.ic_ram, 0xFF37474F),
         CarBrand("toyota", "Toyota", BrandRegion.JAPAN, R.drawable.ic_toyota, 0xFFD32F2F),
         CarBrand("honda", "Honda", BrandRegion.JAPAN, R.drawable.ic_honda, 0xFFB71C1C),
+        CarBrand("hyundai", "Hyundai", BrandRegion.JAPAN, R.drawable.ic_hyundai, 0xFF0D47A1),
         CarBrand("nissan", "Nissan", BrandRegion.JAPAN, R.drawable.ic_nissan, 0xFF455A64),
         CarBrand("mazda", "Mazda", BrandRegion.JAPAN, R.drawable.ic_mazda, 0xFF283593),
         CarBrand("subaru", "Subaru", BrandRegion.JAPAN, R.drawable.ic_subaru, 0xFF1E88E5),

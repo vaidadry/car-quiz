@@ -13,5 +13,5 @@ data class GameStatsEntity(
     val bestQuizCorrect: Int = 0,
     val bestQuizTotal: Int = 0,
     val bestFlashcardsGuessed: Int = 0,
-    val bestFlashcardsTotal: Int = 0
+    val bestFlashcardsTotal: Int = 40
 )

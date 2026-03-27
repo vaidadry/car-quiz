@@ -50,19 +50,11 @@ class GameStatsRepository(private val dao: GameStatsDao) {
 
     suspend fun recordFlashcards(rightGuessed: Int, totalSwipes: Int) {
         val current = dao.get() ?: GameStatsEntity()
-        val improved = isImproved(
-            currentCorrect = current.bestFlashcardsGuessed,
-            currentTotal = current.bestFlashcardsTotal,
-            newCorrect = rightGuessed,
-            newTotal = totalSwipes
-        )
-
         dao.upsert(
             current.copy(
                 lastFlashcardsGuessed = rightGuessed,
                 lastFlashcardsTotal = totalSwipes,
-                bestFlashcardsGuessed = if (improved) rightGuessed else current.bestFlashcardsGuessed,
-                bestFlashcardsTotal = if (improved) totalSwipes else current.bestFlashcardsTotal
+                bestFlashcardsGuessed = maxOf(rightGuessed, current.bestFlashcardsGuessed)
             )
         )
     }

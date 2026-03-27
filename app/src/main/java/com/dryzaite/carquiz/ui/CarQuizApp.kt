@@ -669,7 +669,7 @@ private fun StatsGroupCard(
                     .height(1.dp)
                     .background(AppSurfaceSoft)
             )
-            StatsRow(bottomTitle, bottomValue, bottomSubtitle, bottomPercent, BrandSecondary)
+            StatsRow(bottomTitle, bottomValue, bottomSubtitle, bottomPercent, borderColor)
         }
     }
 }

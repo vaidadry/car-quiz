@@ -213,23 +213,36 @@ fun CarQuizApp(
                     MainTab.LEARN -> FlashcardDeckScreen(
                         brands = BrandCatalog.allBrands,
                         onSwipedRight = {
-                            totalSwipes += 1
-                            rightSwipes += 1
+                            val newRightSwipes = rightSwipes + 1
+                            val newTotalSwipes = totalSwipes + 1
+                            rightSwipes = newRightSwipes
+                            totalSwipes = newTotalSwipes
                             onPositiveSwipe()
-                            scope.launch {
-                                statsRepository.recordFlashcards(
-                                    rightGuessed = rightSwipes,
-                                    totalSwipes = totalSwipes
-                                )
+
+                            if (newTotalSwipes >= BrandCatalog.allBrands.size) {
+                                scope.launch {
+                                    statsRepository.recordFlashcards(
+                                        rightGuessed = newRightSwipes,
+                                        totalSwipes = newTotalSwipes
+                                    )
+                                }
+                                rightSwipes = 0
+                                totalSwipes = 0
                             }
                         },
                         onSwipedLeft = {
-                            totalSwipes += 1
-                            scope.launch {
-                                statsRepository.recordFlashcards(
-                                    rightGuessed = rightSwipes,
-                                    totalSwipes = totalSwipes
-                                )
+                            val newTotalSwipes = totalSwipes + 1
+                            totalSwipes = newTotalSwipes
+
+                            if (newTotalSwipes >= BrandCatalog.allBrands.size) {
+                                scope.launch {
+                                    statsRepository.recordFlashcards(
+                                        rightGuessed = rightSwipes,
+                                        totalSwipes = newTotalSwipes
+                                    )
+                                }
+                                rightSwipes = 0
+                                totalSwipes = 0
                             }
                         }
                     )

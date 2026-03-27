@@ -29,9 +29,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dryzaite.carquiz.R
 import com.dryzaite.carquiz.ui.foundation.OutlinedPillButton
+import com.dryzaite.carquiz.ui.theme.CarQuizTheme
 import com.dryzaite.carquiz.ui.theme.AppSurface
 import com.dryzaite.carquiz.ui.theme.AppSurfaceSoft
 import com.dryzaite.carquiz.ui.theme.BrandPrimary
@@ -79,5 +81,13 @@ fun CongratsScreen(score: Int, total: Int, onPlayAgain: () -> Unit, onHome: () -
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedPillButton(stringResource(R.string.nav_home), BrandSecondary, Icons.Filled.Home, onHome)
         Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun CongratsScreenPreview() {
+    CarQuizTheme {
+        CongratsScreen(score = 8, total = 10, onPlayAgain = {}, onHome = {})
     }
 }

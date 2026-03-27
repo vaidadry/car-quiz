@@ -38,6 +38,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dryzaite.carquiz.R
 import com.dryzaite.carquiz.shared.model.BrandCatalog
@@ -53,6 +54,7 @@ import com.dryzaite.carquiz.ui.theme.BrandPrimary
 import com.dryzaite.carquiz.ui.theme.BrandSecondary
 import com.dryzaite.carquiz.ui.theme.BrandSecondarySoft
 import com.dryzaite.carquiz.ui.theme.BrandTertiary
+import com.dryzaite.carquiz.ui.theme.CarQuizTheme
 import java.util.Locale
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -187,5 +189,17 @@ fun LogoQuizScreen(
         Box(modifier = Modifier.fillMaxWidth().height(16.dp).background(BrandSecondarySoft, RoundedCornerShape(999.dp))) {
             Box(modifier = Modifier.fillMaxWidth(progress).height(16.dp).background(BrandSecondary, RoundedCornerShape(999.dp)))
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun LogoQuizScreenPreview() {
+    CarQuizTheme {
+        LogoQuizScreen(
+            quizSessionId = 1,
+            onSpeakBrand = {},
+            onQuizComplete = { _, _ -> }
+        )
     }
 }

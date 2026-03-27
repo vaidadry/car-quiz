@@ -38,8 +38,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.dryzaite.carquiz.R
+import com.dryzaite.carquiz.shared.model.BrandCatalog
 import com.dryzaite.carquiz.shared.model.CarBrand
 import com.dryzaite.carquiz.ui.foundation.BrandLogo
 import com.dryzaite.carquiz.ui.theme.AppLogoTile
@@ -48,6 +50,7 @@ import com.dryzaite.carquiz.ui.theme.AppTextSecondary
 import com.dryzaite.carquiz.ui.theme.BrandPrimary
 import com.dryzaite.carquiz.ui.theme.BrandSecondary
 import com.dryzaite.carquiz.ui.theme.BrandTertiary
+import com.dryzaite.carquiz.ui.theme.CarQuizTheme
 import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -164,5 +167,17 @@ private fun FlashCardContent(brand: CarBrand, modifier: Modifier = Modifier) {
                 fontWeight = FontWeight.ExtraBold
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun FlashcardDeckScreenPreview() {
+    CarQuizTheme {
+        FlashcardDeckScreen(
+            brands = BrandCatalog.allBrands,
+            onSwipedRight = {},
+            onSwipedLeft = {}
+        )
     }
 }

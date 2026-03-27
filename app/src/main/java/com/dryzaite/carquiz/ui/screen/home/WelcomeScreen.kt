@@ -32,9 +32,11 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dryzaite.carquiz.R
 import com.dryzaite.carquiz.ui.foundation.OutlinedPillButton
+import com.dryzaite.carquiz.ui.theme.CarQuizTheme
 import com.dryzaite.carquiz.ui.theme.AppSurface
 import com.dryzaite.carquiz.ui.theme.AppTextPrimary
 import com.dryzaite.carquiz.ui.theme.AppTextSecondary
@@ -127,5 +129,13 @@ fun WelcomeScreen(onStart: () -> Unit) {
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun WelcomeScreenPreview() {
+    CarQuizTheme {
+        WelcomeScreen(onStart = {})
     }
 }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -35,7 +36,7 @@ fun StatsScreen(
     val quizPct = if (answered == 0) 0 else (correct * 100 / answered)
     val swipePct = if (totalSwipes == 0) 0 else (rightSwipes * 100 / totalSwipes)
 
-    Card(modifier = Modifier.fillMaxWidth(), shape = androidx.compose.foundation.shape.RoundedCornerShape(36.dp), colors = CardDefaults.cardColors(containerColor = AppSurface)) {
+    Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(36.dp), colors = CardDefaults.cardColors(containerColor = AppSurface)) {
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             Text(stringResource(R.string.your_stats), style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.ExtraBold)
             Text(stringResource(R.string.quiz_answers, answered), style = MaterialTheme.typography.titleLarge)

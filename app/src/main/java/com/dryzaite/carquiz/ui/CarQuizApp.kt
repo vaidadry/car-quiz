@@ -122,7 +122,7 @@ fun CarQuizApp(
                     }
 
                     MainTab.LEARN -> FlashcardDeckScreen(
-                        brands = BrandCatalog.allBrands,
+                        brands = BrandCatalog.allBrands.shuffled(),
                         onSwipedRight = {
                             totalSwipes += 1
                             rightSwipes += 1

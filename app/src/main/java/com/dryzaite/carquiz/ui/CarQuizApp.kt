@@ -219,30 +219,22 @@ fun CarQuizApp(
                             totalSwipes = newTotalSwipes
                             onPositiveSwipe()
 
-                            if (newTotalSwipes >= BrandCatalog.allBrands.size) {
-                                scope.launch {
-                                    statsRepository.recordFlashcards(
-                                        rightGuessed = newRightSwipes,
-                                        totalSwipes = newTotalSwipes
-                                    )
-                                }
-                                rightSwipes = 0
-                                totalSwipes = 0
+                            scope.launch {
+                                statsRepository.recordFlashcards(
+                                    rightGuessed = newRightSwipes,
+                                    totalSwipes = newTotalSwipes
+                                )
                             }
                         },
                         onSwipedLeft = {
                             val newTotalSwipes = totalSwipes + 1
                             totalSwipes = newTotalSwipes
 
-                            if (newTotalSwipes >= BrandCatalog.allBrands.size) {
-                                scope.launch {
-                                    statsRepository.recordFlashcards(
-                                        rightGuessed = rightSwipes,
-                                        totalSwipes = newTotalSwipes
-                                    )
-                                }
-                                rightSwipes = 0
-                                totalSwipes = 0
+                            scope.launch {
+                                statsRepository.recordFlashcards(
+                                    rightGuessed = rightSwipes,
+                                    totalSwipes = newTotalSwipes
+                                )
                             }
                         }
                     )

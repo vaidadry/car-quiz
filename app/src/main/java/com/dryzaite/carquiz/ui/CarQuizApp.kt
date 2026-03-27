@@ -211,7 +211,7 @@ fun CarQuizApp(
                     }
 
                     MainTab.LEARN -> FlashcardDeckScreen(
-                        brands = BrandCatalog.allBrands,
+                        brands = BrandCatalog.allBrands.shuffled(),
                         onSwipedRight = {
                             val newRightSwipes = rightSwipes + 1
                             val newTotalSwipes = totalSwipes + 1

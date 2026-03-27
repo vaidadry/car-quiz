@@ -15,7 +15,7 @@
     <string name="brand_with_question">%1$s?</string>
     <string name="question_counter">Question %1$d of %2$d</string>
 
-    <string name="swipe_instruction">Swipe cards right if she knows it</string>
+    <string name="swipe_instruction">Swipe right you know it</string>
     <string name="yay">YAY</string>
     <string name="nay">NAY</string>
     <string name="card_counter">Card %1$d/%2$d</string>

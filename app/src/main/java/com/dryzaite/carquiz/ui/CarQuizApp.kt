@@ -254,6 +254,10 @@ fun CarQuizApp(
                     lastHomeTapMs = now
                 } else {
                     showCongrats = false
+                    if (clicked == MainTab.LEARN && tab != MainTab.LEARN) {
+                        rightSwipes = 0
+                        totalSwipes = 0
+                    }
                 }
                 tab = clicked
             })

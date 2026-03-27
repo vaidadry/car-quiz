@@ -2,6 +2,10 @@ package com.dryzaite.carquiz.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Style
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -19,8 +24,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
+import com.dryzaite.carquiz.R
 import com.dryzaite.carquiz.shared.model.BrandCatalog
 import com.dryzaite.carquiz.ui.foundation.BottomNav
+import com.dryzaite.carquiz.ui.foundation.BottomNavTab
 import com.dryzaite.carquiz.ui.screen.home.CongratsScreen
 import com.dryzaite.carquiz.ui.screen.home.LogoQuizScreen
 import com.dryzaite.carquiz.ui.screen.home.WelcomeScreen
@@ -136,24 +143,48 @@ fun CarQuizApp(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-            BottomNav(tab = tab, onTabChange = { clicked ->
-                val now = System.currentTimeMillis()
-                if (clicked == MainTab.HOME) {
-                    val isDoubleTap = tab == MainTab.HOME && now - lastHomeTapMs < 400L
-                    if (isDoubleTap) {
-                        showWelcome = true
-                        showCongrats = false
-                        quizSessionId += 1
-                    } else if (tab != MainTab.HOME) {
-                        showWelcome = true
-                        showCongrats = false
-                    }
-                    lastHomeTapMs = now
-                } else {
-                    showCongrats = false
-                }
-                tab = clicked
-            })
+            BottomNav(
+                tabs = listOf(
+                    BottomNavTab(
+                        icon = Icons.Filled.Home,
+                        label = stringResource(R.string.nav_home),
+                        isSelected = tab == MainTab.HOME,
+                        onClick = {
+                            val clicked = MainTab.HOME
+                            val now = System.currentTimeMillis()
+                            val isDoubleTap = tab == MainTab.HOME && now - lastHomeTapMs < 400L
+                            if (isDoubleTap) {
+                                showWelcome = true
+                                showCongrats = false
+                                quizSessionId += 1
+                            } else if (tab != MainTab.HOME) {
+                                showWelcome = true
+                                showCongrats = false
+                            }
+                            lastHomeTapMs = now
+                            tab = clicked
+                        }
+                    ),
+                    BottomNavTab(
+                        icon = Icons.Filled.Style,
+                        label = stringResource(R.string.nav_learn),
+                        isSelected = tab == MainTab.LEARN,
+                        onClick = {
+                            showCongrats = false
+                            tab = MainTab.LEARN
+                        }
+                    ),
+                    BottomNavTab(
+                        icon = Icons.Filled.BarChart,
+                        label = stringResource(R.string.nav_stats),
+                        isSelected = tab == MainTab.STATS,
+                        onClick = {
+                            showCongrats = false
+                            tab = MainTab.STATS
+                        }
+                    )
+                )
+            )
         }
     }
 }

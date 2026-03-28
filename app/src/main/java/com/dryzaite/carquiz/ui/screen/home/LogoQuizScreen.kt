@@ -26,12 +26,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -43,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import com.dryzaite.carquiz.R
 import com.dryzaite.carquiz.shared.model.BrandCatalog
 import com.dryzaite.carquiz.shared.quiz.QuizEngine
+import com.dryzaite.carquiz.shared.quiz.QuizQuestion
 import com.dryzaite.carquiz.ui.foundation.BrandLogo
 import com.dryzaite.carquiz.ui.theme.AppBorderNeutral
 import com.dryzaite.carquiz.ui.theme.AppError
@@ -55,43 +50,29 @@ import com.dryzaite.carquiz.ui.theme.BrandSecondary
 import com.dryzaite.carquiz.ui.theme.BrandSecondarySoft
 import com.dryzaite.carquiz.ui.theme.BrandTertiary
 import com.dryzaite.carquiz.ui.theme.CarQuizTheme
-import java.util.Locale
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import java.util.Locale
 
 @Composable
 fun LogoQuizScreen(
-    quizSessionId: Int,
-    onSpeakBrand: (String) -> Unit,
-    onQuizComplete: (Int, Int) -> Unit
+    question: QuizQuestion,
+    selectedAnswerId: String?,
+    onReplayPrompt: () -> Unit,
+    onAnswerSelected: (String) -> Unit
 ) {
-    val engine = remember(quizSessionId) { QuizEngine(BrandCatalog.allBrands, totalQuestions = 10) }
-    var question by remember(quizSessionId) { mutableStateOf(engine.nextQuestion()) }
-    var selectedAnswerId by remember(quizSessionId) { mutableStateOf<String?>(null) }
-    val scope = rememberCoroutineScope()
-
-    LaunchedEffect(question?.number) {
-        question?.let { onSpeakBrand(it.promptBrand.displayName) }
-    }
-
-    if (question == null) {
-        LaunchedEffect(quizSessionId) { onQuizComplete(engine.correctAnswers, engine.answeredQuestions) }
-        return
-    }
-
-    val activeQuestion = question ?: return
-    val progress = activeQuestion.number.toFloat() / activeQuestion.total
+    val progress = question.number.toFloat() / question.total
 
     Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
         Box(
             modifier = Modifier
-                .size(88.dp)
+                .size(80.dp)
                 .background(BrandSecondarySoft, CircleShape)
                 .align(Alignment.CenterHorizontally)
-                .pointerInput(activeQuestion.number) {
+                .pointerInput(question.number) {
                     detectDragGestures(
-                        onDragStart = { onSpeakBrand(activeQuestion.promptBrand.displayName) },
-                        onDrag = { _, _ -> })
+                        onDragStart = { onReplayPrompt() },
+                        onDrag = { _, _ -> }
+                    )
                 },
             contentAlignment = Alignment.Center
         ) {
@@ -114,7 +95,7 @@ fun LogoQuizScreen(
         Text(
             stringResource(
                 R.string.brand_with_question,
-                activeQuestion.promptBrand.displayName.uppercase(Locale.getDefault())
+                question.promptBrand.displayName.uppercase(Locale.getDefault())
             ),
             style = MaterialTheme.typography.headlineLarge,
             color = BrandPrimary,
@@ -124,10 +105,13 @@ fun LogoQuizScreen(
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-        activeQuestion.options.chunked(2).forEach { row ->
-            Row(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+        question.options.chunked(2).forEach { row ->
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
                 row.forEach { brand ->
-                    val correct = brand.id == activeQuestion.correctBrandId
+                    val correct = brand.id == question.correctBrandId
                     val selected = selectedAnswerId == brand.id
                     val border = when {
                         selected && correct -> AppSuccess
@@ -141,13 +125,7 @@ fun LogoQuizScreen(
                         border = BorderStroke(3.dp, border),
                         onClick = {
                             if (selectedAnswerId != null) return@Card
-                            selectedAnswerId = brand.id
-                            engine.submitAnswer(activeQuestion, brand.id)
-                            scope.launch {
-                                delay(650)
-                                selectedAnswerId = null
-                                question = engine.nextQuestion()
-                            }
+                            onAnswerSelected(brand.id)
                         }
                     ) {
                         Column(
@@ -177,9 +155,13 @@ fun LogoQuizScreen(
         }
 
         Spacer(modifier = Modifier.height(8.dp))
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(
-                stringResource(R.string.question_counter, activeQuestion.number, activeQuestion.total),
+                stringResource(R.string.question_counter, question.number, question.total),
                 color = BrandSecondary,
                 fontWeight = FontWeight.Bold
             )
@@ -187,8 +169,18 @@ fun LogoQuizScreen(
         }
 
         Spacer(modifier = Modifier.height(8.dp))
-        Box(modifier = Modifier.fillMaxWidth().height(16.dp).background(BrandSecondarySoft, RoundedCornerShape(999.dp))) {
-            Box(modifier = Modifier.fillMaxWidth(progress).height(16.dp).background(BrandSecondary, RoundedCornerShape(999.dp)))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(16.dp)
+                .background(BrandSecondarySoft, RoundedCornerShape(999.dp))
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(progress)
+                    .height(16.dp)
+                    .background(BrandSecondary, RoundedCornerShape(999.dp))
+            )
         }
     }
 }
@@ -196,11 +188,15 @@ fun LogoQuizScreen(
 @Preview(showBackground = true)
 @Composable
 private fun LogoQuizScreenPreview() {
+    val previewQuestion = QuizEngine(BrandCatalog.allBrands, totalQuestions = 10, seed = 1)
+        .nextQuestion() ?: return
+
     CarQuizTheme {
         LogoQuizScreen(
-            quizSessionId = 1,
-            onSpeakBrand = {},
-            onQuizComplete = { _, _ -> }
+            question = previewQuestion,
+            selectedAnswerId = null,
+            onReplayPrompt = {},
+            onAnswerSelected = {}
         )
     }
 }

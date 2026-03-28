@@ -22,12 +22,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -35,10 +31,10 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.dryzaite.carquiz.R
 import com.dryzaite.carquiz.shared.model.BrandCatalog
@@ -60,23 +56,30 @@ import kotlinx.coroutines.launch
 @Composable
 fun FlashcardDeckScreen(
     brands: List<CarBrand>,
+    currentIndex: Int,
     onSwipedRight: () -> Unit,
     onSwipedLeft: () -> Unit
 ) {
-    var currentIndex by remember { mutableIntStateOf(0) }
+    if (brands.isEmpty()) return
+
     val xOffset = remember { Animatable(0f) }
     val yOffset = remember { Animatable(0f) }
-    var deckSize by remember { mutableStateOf(IntSize.Zero) }
+    val deckSize = remember { androidx.compose.runtime.mutableStateOf(IntSize.Zero) }
     val scope = rememberCoroutineScope()
 
-    val current = brands[currentIndex]
+    val current = brands[currentIndex % brands.size]
     val next = brands[(currentIndex + 1) % brands.size]
     val rotation = (xOffset.value / 36f).coerceIn(-22f, 22f)
     val yayAlpha = (xOffset.value / 220f).coerceIn(0f, 1f)
     val nayAlpha = (-xOffset.value / 220f).coerceIn(0f, 1f)
 
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(stringResource(R.string.swipe_instruction), style = MaterialTheme.typography.headlineSmall, color = AppTextSecondary, fontWeight = FontWeight.Bold)
+        Text(
+            stringResource(R.string.swipe_instruction),
+            style = MaterialTheme.typography.headlineSmall,
+            color = AppTextSecondary,
+            fontWeight = FontWeight.Bold
+        )
         Spacer(modifier = Modifier.height(16.dp))
 
         Box(
@@ -84,7 +87,7 @@ fun FlashcardDeckScreen(
                 .fillMaxWidth()
                 .padding(16.dp)
                 .weight(1f)
-                .onSizeChanged { deckSize = it },
+                .onSizeChanged { deckSize.value = it },
             contentAlignment = Alignment.Center
         ) {
             FlashCardContent(
@@ -106,7 +109,7 @@ fun FlashcardDeckScreen(
                     .fillMaxWidth(0.94f)
                     .offset { IntOffset(xOffset.value.roundToInt(), yOffset.value.roundToInt()) }
                     .graphicsLayer { rotationZ = rotation }
-                    .pointerInput(currentIndex, deckSize) {
+                    .pointerInput(currentIndex, deckSize.value) {
                         detectDragGestures(
                             onDrag = { _, dragAmount ->
                                 scope.launch {
@@ -116,13 +119,12 @@ fun FlashcardDeckScreen(
                             },
                             onDragEnd = {
                                 scope.launch {
-                                    val threshold = deckSize.width * 0.25f
+                                    val threshold = deckSize.value.width * 0.25f
                                     if (abs(xOffset.value) > threshold) {
                                         val direction = sign(xOffset.value).takeIf { it != 0f } ?: 1f
-                                        xOffset.animateTo(direction * deckSize.width * 1.4f, tween(220))
+                                        xOffset.animateTo(direction * deckSize.value.width * 1.4f, tween(220))
                                         yOffset.animateTo(yOffset.value + 90f, tween(220))
                                         if (direction > 0f) onSwipedRight() else onSwipedLeft()
-                                        currentIndex = (currentIndex + 1) % brands.size
                                         xOffset.snapTo(0f)
                                         yOffset.snapTo(0f)
                                     } else {
@@ -135,12 +137,30 @@ fun FlashcardDeckScreen(
                     }
             )
 
-            Text(stringResource(R.string.yay), modifier = Modifier.align(Alignment.TopStart).offset(x = 26.dp, y = 34.dp).graphicsLayer { alpha = yayAlpha }, color = BrandTertiary, fontWeight = FontWeight.Black, fontSize = 32.sp)
-            Text(stringResource(R.string.nay), modifier = Modifier.align(Alignment.TopEnd).offset(x = (-26).dp, y = 34.dp).graphicsLayer { alpha = nayAlpha }, color = BrandPrimary, fontWeight = FontWeight.Black, fontSize = 32.sp)
+            Text(
+                stringResource(R.string.yay),
+                modifier = Modifier.align(Alignment.TopStart).offset(x = 26.dp, y = 34.dp)
+                    .graphicsLayer { alpha = yayAlpha },
+                color = BrandTertiary,
+                fontWeight = FontWeight.Black,
+                fontSize = 32.sp
+            )
+            Text(
+                stringResource(R.string.nay),
+                modifier = Modifier.align(Alignment.TopEnd).offset(x = (-26).dp, y = 34.dp)
+                    .graphicsLayer { alpha = nayAlpha },
+                color = BrandPrimary,
+                fontWeight = FontWeight.Black,
+                fontSize = 32.sp
+            )
         }
 
         Spacer(modifier = Modifier.height(8.dp))
-        Text(stringResource(R.string.card_counter, currentIndex + 1, brands.size), color = BrandSecondary, style = MaterialTheme.typography.headlineSmall)
+        Text(
+            stringResource(R.string.card_counter, currentIndex + 1, brands.size),
+            color = BrandSecondary,
+            style = MaterialTheme.typography.headlineSmall
+        )
     }
 }
 
@@ -157,7 +177,10 @@ private fun FlashCardContent(brand: CarBrand, modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Box(modifier = Modifier.size(170.dp).background(AppLogoTile, RoundedCornerShape(4.dp)), contentAlignment = Alignment.Center) {
+            Box(
+                modifier = Modifier.size(170.dp).background(AppLogoTile, RoundedCornerShape(4.dp)),
+                contentAlignment = Alignment.Center
+            ) {
                 BrandLogo(brand = brand, modifier = Modifier.fillMaxSize().padding(16.dp))
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -176,6 +199,7 @@ private fun FlashcardDeckScreenPreview() {
     CarQuizTheme {
         FlashcardDeckScreen(
             brands = BrandCatalog.allBrands,
+            currentIndex = 0,
             onSwipedRight = {},
             onSwipedLeft = {}
         )

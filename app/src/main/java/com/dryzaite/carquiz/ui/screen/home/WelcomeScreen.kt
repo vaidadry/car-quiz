@@ -25,10 +25,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -44,13 +42,12 @@ import com.dryzaite.carquiz.ui.theme.BrandPrimary
 import com.dryzaite.carquiz.ui.theme.BrandTertiary
 import com.dryzaite.carquiz.ui.theme.HomeFactCard
 import com.dryzaite.carquiz.ui.theme.HomeFactIconBg
-import kotlin.random.Random
 
 @Composable
-fun WelcomeScreen(onStart: () -> Unit) {
-    val facts = stringArrayResource(R.array.car_fun_facts)
-    val factIndex = remember { Random.nextInt(facts.size) }
-
+fun WelcomeScreen(
+    funFact: String,
+    onStart: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -122,7 +119,7 @@ fun WelcomeScreen(onStart: () -> Unit) {
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        facts[factIndex],
+                        funFact,
                         color = BrandTertiary,
                         style = MaterialTheme.typography.bodyLarge
                     )
@@ -136,6 +133,6 @@ fun WelcomeScreen(onStart: () -> Unit) {
 @Composable
 private fun WelcomeScreenPreview() {
     CarQuizTheme {
-        WelcomeScreen(onStart = {})
+        WelcomeScreen(funFact = "Cars have blinkers to show where they want to go.", onStart = {})
     }
 }

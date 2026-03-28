@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Car Quiz</string>
+    <string name="app_name">Vroom explorer</string>
 
     <string name="nav_home">Home</string>
     <string name="nav_learn">Learn</string>
@@ -21,13 +21,16 @@
     <string name="card_counter">Card %1$d/%2$d</string>
 
     <string name="your_stats">Your Stats</string>
-    <string name="quiz_answers">Quiz answers: %1$d</string>
-    <string name="quiz_correct">Quiz correct: %1$d</string>
-    <string name="quiz_accuracy">Quiz accuracy: %1$d%%</string>
-    <string name="last_quiz">Last quiz: %1$d/%2$d</string>
-    <string name="flashcards_swiped">Flashcards swiped: %1$d</string>
-    <string name="right_swipes">Right swipes (YAY): %1$d</string>
-    <string name="yay_rate">YAY rate: %1$d%%</string>
+    <string name="quiz_results">Quiz\nResults</string>
+    <string name="quiz_no_games">No games yet</string>
+    <string name="quiz_master">Quiz master</string>
+    <string name="flashcards_label">Flashcards</string>
+    <string name="flashcards_guessed">Guessed</string>
+    <string name="results_all_time_best">All Time Best</string>
+    <string name="results_top_score">Top\nScore</string>
+    <string name="results_max_guessed">Max\nGuessed</string>
+    <string name="results_in_one_go">In one go</string>
+
 
     <string name="great_job">Great Job!</string>
     <string name="found_cars_today">You found %1$d of %2$d cars today!</string>

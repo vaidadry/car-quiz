@@ -166,7 +166,8 @@ fun LogoQuizScreen(
                                 text = brand.displayName.uppercase(Locale.getDefault()),
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Bold,
-                                color = AppTextPrimary
+                                color = AppTextPrimary,
+                                textAlign = TextAlign.Center
                             )
                         }
                     }

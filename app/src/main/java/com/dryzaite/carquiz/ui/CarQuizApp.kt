@@ -14,12 +14,14 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -33,9 +35,12 @@ import com.dryzaite.carquiz.ui.screen.home.LogoQuizScreen
 import com.dryzaite.carquiz.ui.screen.home.WelcomeScreen
 import com.dryzaite.carquiz.ui.screen.learn.FlashcardDeckScreen
 import com.dryzaite.carquiz.ui.screen.stats.StatsScreen
+import com.dryzaite.carquiz.stats.data.GameStatsRepository
+import com.dryzaite.carquiz.stats.data.PersistedStats
 import com.dryzaite.carquiz.ui.theme.AppGradientBottom
 import com.dryzaite.carquiz.ui.theme.AppGradientMid
 import com.dryzaite.carquiz.ui.theme.AppGradientTop
+import kotlinx.coroutines.launch
 
 enum class MainTab {
     HOME,
@@ -45,6 +50,7 @@ enum class MainTab {
 
 @Composable
 fun CarQuizApp(
+    statsRepository: GameStatsRepository,
     onSpeakBrand: (String) -> Unit,
     onPositiveSwipe: () -> Unit
 ) {
@@ -53,13 +59,13 @@ fun CarQuizApp(
     var showCongrats by remember { mutableStateOf(false) }
     var quizSessionId by remember { mutableIntStateOf(0) }
     var lastHomeTapMs by remember { mutableLongStateOf(0L) }
-
     var lastScore by remember { mutableIntStateOf(0) }
     var lastTotal by remember { mutableIntStateOf(0) }
-    var lifetimeCorrect by remember { mutableIntStateOf(0) }
-    var lifetimeAnswered by remember { mutableIntStateOf(0) }
     var rightSwipes by remember { mutableIntStateOf(0) }
     var totalSwipes by remember { mutableIntStateOf(0) }
+
+    val scope = rememberCoroutineScope()
+    val persistedStats by statsRepository.stats.collectAsState(initial = PersistedStats())
 
     Box(
         modifier = Modifier
@@ -113,9 +119,8 @@ fun CarQuizApp(
                                 onQuizComplete = { score, total ->
                                     lastScore = score
                                     lastTotal = total
-                                    lifetimeCorrect += score
-                                    lifetimeAnswered += total
                                     showCongrats = true
+                                    scope.launch { statsRepository.recordQuiz(score, total) }
                                 }
                             )
                         }
@@ -124,21 +129,33 @@ fun CarQuizApp(
                     MainTab.LEARN -> FlashcardDeckScreen(
                         brands = BrandCatalog.allBrands.shuffled(),
                         onSwipedRight = {
-                            totalSwipes += 1
-                            rightSwipes += 1
+                            val newRightSwipes = rightSwipes + 1
+                            val newTotalSwipes = totalSwipes + 1
+                            rightSwipes = newRightSwipes
+                            totalSwipes = newTotalSwipes
                             onPositiveSwipe()
+
+                            scope.launch {
+                                statsRepository.recordFlashcards(
+                                    rightGuessed = newRightSwipes,
+                                    totalSwipes = newTotalSwipes
+                                )
+                            }
                         },
-                        onSwipedLeft = { totalSwipes += 1 }
+                        onSwipedLeft = {
+                            val newTotalSwipes = totalSwipes + 1
+                            totalSwipes = newTotalSwipes
+
+                            scope.launch {
+                                statsRepository.recordFlashcards(
+                                    rightGuessed = rightSwipes,
+                                    totalSwipes = newTotalSwipes
+                                )
+                            }
+                        }
                     )
 
-                    MainTab.STATS -> StatsScreen(
-                        correct = lifetimeCorrect,
-                        answered = lifetimeAnswered,
-                        lastScore = lastScore,
-                        lastTotal = lastTotal,
-                        rightSwipes = rightSwipes,
-                        totalSwipes = totalSwipes
-                    )
+                    MainTab.STATS -> StatsScreen(stats = persistedStats)
                 }
             }
 

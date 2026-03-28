@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.CarQuiz" parent="android:Theme.Material.Light.NoActionBar.TranslucentDecor"/>
+    <style name="Theme.CarQuiz" parent="android:Theme.Material.Light.NoActionBar.TranslucentDecor" />
+
+    <style name="Theme.CarQuiz.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#FBF5F0</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_round</item>
+        <item name="postSplashScreenTheme">@style/Theme.CarQuiz</item>
+    </style>
 </resources>

@@ -1,3 +1,61 @@
 <resources>
     <string name="app_name">Vroom explorer</string>
+
+    <string name="nav_home">Home</string>
+    <string name="nav_learn">Learn</string>
+    <string name="nav_stats">Stats</string>
+
+    <string name="welcome_title">Hello, Explorer!</string>
+    <string name="welcome_subtitle">Ready to discover all the amazing cars in the world?</string>
+    <string name="play">Play</string>
+    <string name="did_you_know">Did you know?</string>
+
+    <string name="speak_brand">Speak brand</string>
+    <string name="which_one_is_the">Which one is the</string>
+    <string name="brand_with_question">%1$s?</string>
+    <string name="question_counter">Question %1$d of %2$d</string>
+
+    <string name="swipe_instruction">Swipe right you know it</string>
+    <string name="yay">YAY</string>
+    <string name="nay">NAY</string>
+    <string name="card_counter">Card %1$d/%2$d</string>
+
+    <string name="your_stats">Your Stats</string>
+    <string name="quiz_results">Quiz\nResults</string>
+    <string name="quiz_no_games">No games yet</string>
+    <string name="quiz_master">Quiz master</string>
+    <string name="flashcards_label">Flashcards</string>
+    <string name="flashcards_guessed">Guessed</string>
+    <string name="results_all_time_best">All Time Best</string>
+    <string name="results_top_score">Top\nScore</string>
+    <string name="results_max_guessed">Max\nGuessed</string>
+    <string name="results_in_one_go">In one go</string>
+
+
+    <string name="great_job">Great Job!</string>
+    <string name="found_cars_today">You found %1$d of %2$d cars today!</string>
+    <string name="play_again">Play Again</string>
+
+    <string-array name="car_fun_facts">
+        <item>The first practical car was built in 1886.</item>
+        <item>Some electric cars can accelerate faster than sports cars.</item>
+        <item>Car tires are made from more than just rubber.</item>
+        <item>Seat belts save millions of lives every year.</item>
+        <item>The first city speed limit was only 10 mph.</item>
+        <item>Windshield wipers were invented in 1903.</item>
+        <item>The rearview mirror became popular after racing.</item>
+        <item>Most cars have over 30000 parts.</item>
+        <item>Car paint has multiple layers for shine and protection.</item>
+        <item>ABS helps cars stop safely on slippery roads.</item>
+        <item>Hybrid cars use both electricity and fuel.</item>
+        <item>Airbags can inflate in a fraction of a second.</item>
+        <item>Cruise control helps keep steady highway speed.</item>
+        <item>Electric cars have fewer moving engine parts.</item>
+        <item>The horn was one of the earliest safety features.</item>
+        <item>Some headlights turn with the steering wheel.</item>
+        <item>Some cars can park themselves.</item>
+        <item>Car GPS uses satellites high above Earth.</item>
+        <item>A clean air filter helps engines run better.</item>
+        <item>Regular tire checks make rides safer and smoother.</item>
+    </string-array>
 </resources>

@@ -27,7 +27,8 @@ Downloaded for educational quiz use.
 - ferrari — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/ferrari.svg
 - lamborghini — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/lamborghini.svg
 - fiat — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/fiat.svg
-- citroen — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/citroen.svg
+- citroen — https://unpkg.com/simple-icons@8.15.0/icons/citroen.svg
+- hyundai — https://unpkg.com/simple-icons@8.15.0/icons/hyundai.svg
 - skoda — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/skoda.svg
 - seat — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/seat.svg
 - opel — https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/opel.svg

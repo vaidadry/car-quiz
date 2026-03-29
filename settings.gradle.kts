@@ -22,6 +22,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Car Quiz"
-include(":app")
-include(":shared")
+rootProject.name = "CarQuiz"
+include(":composeApp")
